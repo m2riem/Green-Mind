@@ -1,7 +1,3 @@
-
-
-
-
 "use client";
 import Image from "next/image";
 import Link from "next/link";
@@ -74,7 +70,7 @@ export default function LessonPage() {
           <h2 className="font-semibold text-xl">Overview</h2>
           <p className="text-gray-600 mt-2 leading-6">
             Learn how recycling helps protect our planet! In this video, kids will
-            discover what recycling means, why it's important, and how simple actions
+            discover what recycling means, why its important, and how simple actions
             like sorting plastic, paper, and metal ♻️
           </p>
         </div>
