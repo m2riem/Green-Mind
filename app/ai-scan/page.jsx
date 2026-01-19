@@ -12,7 +12,7 @@ export default function AiScanPage() {
       {/* Page Content */}
       <div className="relative z-10 flex w-full h-full">
         {/* Sidebar */}
-        <div className="w-[350px] h-full bg-white shadow-md rounded-tr-3xl rounded-br-3xl p-6">
+        <div className="w-[350px] h-full bg-gradient-to-b from-[#00C9FF]/70 to-[#92FE9D]/70 backdrop-blur-lg shadow-lg rounded-tr-3xl rounded-br-3xl p-6 border border-white/30">
           <div className="flex items-center gap-3 mb-8">
             <Image src="/SCreen/logo.png" width={48} height={48} alt="logo" />
             <h2 className="text-xl font-semibold">Green Mind</h2>
@@ -66,7 +66,7 @@ export default function AiScanPage() {
 
           {/* Upload Section */}
           <div className="relative flex flex-col items-center mb-12">
-            <div className="bg-[#EFFFF4] border-4 border-dashed border-green-500 rounded-3xl p-10 flex flex-col items-center justify-center text-center w-[70%] overflow-hidden relative z-10 shadow-md">
+            <div className="bg-[#EFFFF4] border-4 border-dashed border-green-600 rounded-3xl p-20 flex flex-col items-center justify-center text-center w-[70%] overflow-hidden relative z-30 shadow-md">
               <Image
                 src="/SCreen/camera-ai.png"
                 width={150}
@@ -93,11 +93,11 @@ export default function AiScanPage() {
           {/* Bottom Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* XP Card */}
-            <div className="bg-white rounded-2xl shadow-md p-6 flex items-center gap-4 hover:scale-105 transition">
+            <div className="bg-white rounded-3xl shadow-md p-10 flex items-center gap-4 hover:scale-105 transition shadow-md ">
               <Image
                 src="/SCreen/tree.png"
-                width={80}
-                height={80}
+                width={200}
+                height={100}
                 alt="tree"
               />
               <div>
@@ -109,9 +109,9 @@ export default function AiScanPage() {
             </div>
 
             {/* Recent Scans */}
-            <div className="bg-white rounded-2xl shadow-md p-6 hover:scale-105 transition">
+            <div className="bg-white rounded-3xl shadow-md p-10 hover:scale-105 transition shadow-md">
               <h3 className="font-semibold mb-4">Recent Plant You Scanned</h3>
-              <div className="flex gap-3">
+              <div className="flex gap-8">
                 <Image
                   src="/SCreen/tree-ai.jpg"
                   width={80}

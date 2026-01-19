@@ -15,7 +15,7 @@ export default function GamesPage() {
       {/* Page Content */}
       <div className="relative z-100 flex w-full h-full">
         {/* Sidebar */}
-        <div className="w-[350px] h-full bg-white shadow-md rounded-tr-3xl rounded-br-3xl p-4">
+        <div className="w-[350px] h-full bg-gradient-to-b from-[#00C9FF]/70 to-[#92FE9D]/70 backdrop-blur-lg shadow-lg rounded-tr-3xl rounded-br-3xl p-6 border border-white/30">
           <div className="flex items-center gap-3 mb-9">
             <Image src="/SCreen/logo.png" width={48} height={48} alt="logo" />
             <h2 className="text-xl font-semibold">Green Mind</h2>
