@@ -1,22 +1,24 @@
-
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { IoNotificationsOutline, IoSettingsOutline } from "react-icons/io5";
+
 
 export default function Navbar() {
   return (
-    <nav className="bg-green-600 text-white">
-      <div className="container w-full lg:w-[88%] mx-auto gap-4 flex-col flex lg:flex-row justify-between items-center p-4">
+    <nav className="backdrop-hidden-md bg-white/0 border-b border-white/0 shadow-sm fixed top-0 left-0 w-full z-0">
+          <div className="flex justify-end items-center gap-4 mb-8 bg-white/0  p-4 rounded-xl shadow lg:w-[100%]">
         <div className="left">
           <ul className="flex gap-2 lg:gap-6 items-center">
             <li className="text-2xl flex items-center gap-2">
+              
               <Link href="/">
-                <span className="flex items-center gap-2">
-                  <i className="fa-solid "></i> Green mind
-                </span>
+                
               </Link>
-              </li>
-            <li><Link href="/">Home</Link></li>
-            
+
+             
+
+              </li>            
             {/* <li><Link href="/products">Products</Link></li>
             <li><Link href="/categories">Categories</Link></li>
             <li><Link href="/brands">Brands</Link></li> */}
@@ -31,8 +33,8 @@ export default function Navbar() {
             <li><i className="fab fa-twitter"></i></li>
             <li><i className="fab fa-instagram"></i></li>
             <li><i className="fab fa-linkedin"></i></li> */}
-            <li><Link href="/Signup"> Signup</Link></li>
-            <li><Link href="/login">Login</Link></li>
+           {/* <li><Link href="/Signup"> Signup</Link></li>
+            <li><Link href="/login">Login</Link></li>*/}
           </ul>
         </div>
       </div>
