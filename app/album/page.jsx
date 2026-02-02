@@ -1,13 +1,19 @@
 "use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
   IoNotificationsOutline,
   IoSettingsOutline,
   IoSearch,
+  IoPersonOutline,
+  IoLogOutOutline,
 } from "react-icons/io5";
 
 export default function AlbumPage() {
+  const [openDropdown, setOpenDropdown] = useState(false);
+
   return (
     <div className="w-full min-h-screen flex bg-[#F5F5F5] relative overflow-hidden">
       {/* Overlay Blur */}
@@ -48,18 +54,54 @@ export default function AlbumPage() {
         {/* Main Content */}
         <div className="flex-1 p-6 overflow-y-auto h-screen">
           {/* Navbar */}
-          <div className="flex justify-end items-center gap-4 mb-8 backdrop-blur-md p-4 rounded-xl shadow">
-            <li>
-              <Link href="/">Home</Link>
-            </li>
-            <IoNotificationsOutline className="text-2xl cursor-pointer" />
-            <IoSettingsOutline className="text-2xl cursor-pointer hover:rotate-90 transition" />
+          <div className="flex justify-end items-center gap-4 mb-8 backdrop-blur-md p-4 rounded-xl shadow relative z-[999]">
+            <Link href="/" className="hover:text-green-600 transition">
+              Home
+            </Link>
+
+            <IoNotificationsOutline className="text-2xl cursor-pointer hover:text-green-600 transition" />
+
+            {/* ====== Settings Dropdown ====== */}
+            <div className="relative">
+              <IoSettingsOutline
+                className="text-2xl cursor-pointer hover:rotate-90 transition"
+                onClick={() => setOpenDropdown(!openDropdown)}
+              />
+
+              {openDropdown && (
+                <div className="absolute right-0 mt-3 w-48 bg-white shadow-lg rounded-xl border border-gray-100 py-2 z-[9999]">
+                  <Link
+                    href="/parent/edit-profile"
+                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    <IoPersonOutline />
+                    Profile
+                  </Link>
+
+                  <Link
+                    href="/settings"
+                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    <IoSettingsOutline />
+                    Settings
+                  </Link>
+
+                  <button
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                  >
+                    <IoLogOutOutline />
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+
             <Image
               src="/SCreen/cute.png"
               width={45}
               height={45}
               alt="avatar"
-              className="rounded-full cursor-pointer"
+              className="rounded-full cursor-pointer border-2 border-green-400"
             />
           </div>
 
