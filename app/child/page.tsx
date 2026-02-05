@@ -56,7 +56,7 @@ export default function Dashboard() {
               title="Games"
               icon="/SCreen/games.png"
               href="/games"
-              active
+             
             />
             <MenuItem title="AI Scan" icon="/SCreen/ai.png" href="/ai-scan" />
             <MenuItem

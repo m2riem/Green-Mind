@@ -36,17 +36,17 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="w-full h-screen bg-[#F5F5F5] flex overflow-hidden">
+    <div className="w-full h-screen bg-[#F5F5F5] flex overflow-hidden ">
       {/* Sidebar */}
-   
-<div className="w-[350px] h-full bg-gradient-to-b from-[#00C9FF]/70 to-[#92FE9D]/70 backdrop-blur-lg shadow-lg rounded-tr-3xl rounded-br-3xl p-6 border border-white/30">
+     
+<div className="w-[350px] h-full  bg-gradient-to-b from-[#00C9FF]/70 to-[#92FE9D]/70 backdrop-blur-lg shadow-lg rounded-tr-3xl rounded-br-3xl p-6 border border-white/30">
           <div className="flex items-center gap-3 mb-9">
             <Image src="/SCreen/logo.png" width={48} height={48} alt="logo" />
             <h2 className="text-xl font-semibold">Green Mind</h2>
           </div>
 
           <div className="flex flex-col gap-5">
-            <MenuItem title="Dashboard" icon="/SCreen/dash.png" href="/dashboard" active />
+            <MenuItem title="Dashboard" icon="/SCreen/dash.png" href="/dashboard"    active/>
             <MenuItem
               title="Lessons"
               icon="/SCreen/start lesson.png"
@@ -56,7 +56,7 @@ export default function Dashboard() {
               title="Games"
               icon="/SCreen/games.png"
               href="/games"
-             
+           
             />
             <MenuItem title="AI Scan" icon="/SCreen/ai.png" href="/ai-scan" />
             <MenuItem
@@ -66,7 +66,8 @@ export default function Dashboard() {
             />
             <MenuItem title="Album" icon="/SCreen/album.png" href="/album" />
           </div>
-        </div>
+        </div> 
+
 
       {/* Main Content */}
       <main className="flex-1 p-6 overflow-y-auto">
