@@ -17,6 +17,7 @@ export default function AiScanPage() {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState([]);
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
   /* ================= Load Album ================= */
   useEffect(() => {
@@ -51,6 +52,12 @@ export default function AiScanPage() {
     setMessage("");
   };
 
+  /* ================= Handle Logout ================= */
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
+
   return (
     <div className="w-full min-h-screen flex bg-[#F5F5F5] relative">
       {/* Blur */}
@@ -65,7 +72,11 @@ export default function AiScanPage() {
           </div>
 
           <div className="flex flex-col gap-5">
-            <MenuItem title="Dashboard" icon="/SCreen/dash.png" href="/child" />
+            <MenuItem
+              title="Dashboard"
+              icon="/SCreen/dash.png"
+              href="/dashboard"
+            />
             <MenuItem
               title="Lessons"
               icon="/SCreen/start lesson.png"
@@ -78,7 +89,7 @@ export default function AiScanPage() {
               href="/ai-scan"
               active
             />
-             <MenuItem
+            <MenuItem
               title="Tree Growth"
               icon="/SCreen/tree-gro.png"
               href="/growth"
@@ -91,7 +102,7 @@ export default function AiScanPage() {
         <div className="flex-1 p-6 overflow-y-auto h-full">
           {/* Navbar */}
           <div className="flex justify-end items-center gap-4 mb-8 backdrop-blur-md p-4 rounded-xl shadow relative z-[999]">
-            <Link href="/landing" className="hover:text-green-600 transition">
+            <Link href="/" className="hover:text-green-600 transition">
               Home
             </Link>
 
@@ -106,23 +117,11 @@ export default function AiScanPage() {
 
               {openDropdown && (
                 <div className="absolute right-0 mt-3 w-48 bg-white shadow-lg rounded-xl border border-gray-100 py-2 z-50">
-                  <Link
-                    href="/parent/edit-profile"
-                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
+                  {/* ✅ زرار Logout يفتح البوب أب */}
+                  <button
+                    onClick={() => setShowLogoutPopup(true)}
+                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
                   >
-                    <IoPersonOutline />
-                    Profile
-                  </Link>
-
-                  <Link
-                    href="/settings"
-                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
-                  >
-                    <IoSettingsOutline />
-                    Settings
-                  </Link>
-
-                  <button className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition">
                     <IoLogOutOutline />
                     Logout
                   </button>
@@ -146,7 +145,6 @@ export default function AiScanPage() {
 
           {/* ================= Upload ================= */}
           <div className="relative flex flex-col items-center mb-12">
-            {/* Upload Box */}
             <div className="bg-[#EFFFF4] border-4 border-dashed border-green-600 rounded-3xl p-12 flex flex-col items-center text-center w-[70%] shadow relative z-20">
               <Image
                 src="/SCreen/camera-ai.png"
@@ -154,7 +152,6 @@ export default function AiScanPage() {
                 height={80}
                 alt="camera"
               />
-
               <p className="mt-3 text-gray-600">Upload Plant Photo</p>
 
               <label className="mt-3 bg-green-600 text-white px-6 py-2 rounded-xl cursor-pointer hover:scale-105 transition">
@@ -168,7 +165,6 @@ export default function AiScanPage() {
               </label>
             </div>
 
-            {/* Green Character */}
             <Image
               src="/SCreen/Group 45.png"
               width={190}
@@ -217,7 +213,6 @@ export default function AiScanPage() {
 
           {/* ================= Bottom ================= */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
-            {/* XP */}
             <div className="bg-white rounded-3xl shadow-md p-8 flex items-center gap-5">
               <Image
                 src="/SCreen/tree.png"
@@ -229,14 +224,13 @@ export default function AiScanPage() {
               <div>
                 <h3 className="text-green-600 font-bold text-lg">+2 XP!</h3>
                 <p className="text-sm text-gray-600">
-                  Scnning your Real Plants Help You Grow Your Tree 🌳
+                  Scanning your real plants helps your tree grow 🌳
                 </p>
               </div>
             </div>
 
-            {/* Recent */}
             <div className="bg-white rounded-3xl shadow-md p-8">
-              <h3 className="font-semibold mb-4">Recent Plant You Scanned</h3>
+              <h3 className="font-semibold mb-4">Recent Plants You Scanned</h3>
 
               <div className="flex gap-4 flex-wrap">
                 {recentScans.slice(0, 4).map((img, i) => (
@@ -254,6 +248,62 @@ export default function AiScanPage() {
           </div>
         </div>
       </div>
+
+      {/* ================= LOGOUT POPUP ================= */}
+      {showLogoutPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[1000]">
+          <div className="bg-white rounded-3xl shadow-2xl p-10 w-[90%] max-w-[480px] text-center relative">
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/SCreen/Group 45.png"
+                width={120}
+                height={120}
+                alt="green character"
+                className="animate-bounce-fast"
+              />
+            </div>
+
+            <h2 className="text-3xl font-bold text-green-700 mb-3">
+              Are you sure you want to logout?
+            </h2>
+            <p className="text-gray-600 mb-8">
+              You’ll be redirected to the login page.
+            </p>
+
+            <div className="flex justify-center gap-6">
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition font-medium text-lg"
+              >
+                Yes, Logout
+              </button>
+
+              <button
+                onClick={() => setShowLogoutPopup(false)}
+                className="bg-gray-300 text-gray-800 px-6 py-3 rounded-xl hover:bg-gray-400 transition font-medium text-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          {/* حركة للكائن الأخضر */}
+          <style jsx global>{`
+            @keyframes bounce {
+              0%,
+              100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-10px);
+              }
+            }
+            .animate-bounce-fast {
+              animation: bounce 1s infinite;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

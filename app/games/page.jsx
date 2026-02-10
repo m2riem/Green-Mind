@@ -12,6 +12,12 @@ import {
 
 export default function GamesPage() {
   const [openDropdown, setOpenDropdown] = useState(false);
+  const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/login";
+  };
 
   return (
     <div
@@ -31,7 +37,11 @@ export default function GamesPage() {
           </div>
 
           <div className="flex flex-col gap-5">
-            <MenuItem title="Dashboard" icon="/SCreen/dash.png" href="/child" />
+            <MenuItem
+              title="Dashboard"
+              icon="/SCreen/dash.png"
+              href="/dashboard"
+            />
             <MenuItem
               title="Lessons"
               icon="/SCreen/start lesson.png"
@@ -57,7 +67,7 @@ export default function GamesPage() {
         <div className="flex-1 p-6 overflow-y-auto h-full">
           {/* Navbar */}
           <div className="flex justify-end items-center gap-4 mb-8 backdrop-blur-md p-4 rounded-xl shadow relative z-[999]">
-            <Link href="/landing" className="hover:text-green-600 transition">
+            <Link href="/" className="hover:text-green-600 transition">
               Home
             </Link>
 
@@ -71,24 +81,10 @@ export default function GamesPage() {
               />
 
               {openDropdown && (
-                <div className="absolute right-0 mt-3 w-48 bg-white shadow-lg rounded-xl border border-gray-100 py-2 z-[9999]">
-                  <Link
-                    href="/parent/edit-profile"
-                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
-                  >
-                    <IoPersonOutline />
-                    Profile
-                  </Link>
-
-                  <Link
-                    href="/settings"
-                    className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
-                  >
-                    <IoSettingsOutline />
-                    Settings
-                  </Link>
-
+                <div className="absolute right-0 mt-3 w-48 bg-white shadow-lg rounded-xl border border-gray-100 py-2 z-50">
+                  {/* ✅ زرار Logout يفتح البوب أب */}
                   <button
+                    onClick={() => setShowLogoutPopup(true)}
                     className="flex items-center gap-2 w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100 transition"
                   >
                     <IoLogOutOutline />
@@ -103,7 +99,7 @@ export default function GamesPage() {
               width={45}
               height={45}
               alt="avatar"
-              className="rounded-full cursor-pointer border-2 border-green-400"
+              className="rounded-full"
             />
           </div>
 
@@ -111,9 +107,7 @@ export default function GamesPage() {
           <h1 className="text-2xl font-semibold text-center mb-6">Games</h1>
 
           {/* Banner */}
-          <div
-            className="bg-[#7a4a00] text-white text-center py-6 px-12 rounded-3xl mb-12 text-xl font-semibold max-w-4xl mx-auto shadow-xl"
-          >
+          <div className="bg-[#7a4a00] text-white text-center py-6 px-12 rounded-3xl mb-12 text-xl font-semibold max-w-4xl mx-auto shadow-xl">
             Choose A Fun Eco-Friendly Game And Earn XP To Grow Your Tree
           </div>
 
@@ -122,7 +116,12 @@ export default function GamesPage() {
             {/* Top Cards */}
             <div className="flex flex-wrap justify-center gap-8">
               {/* Puzzle */}
-              <div className="bg-[#00AEEF] w-[480px] h-[360px] rounded-3xl shadow-xl flex flex-col items-center justify-center gap-6 hover:scale-105 transition cursor-pointer">
+              <div
+                onClick={() =>
+                  window.open("/puzzle-game-main/start2.html", "_blank")
+                }
+                className="bg-[#00AEEF] w-[480px] h-[360px] rounded-3xl shadow-xl flex flex-col items-center justify-center gap-6 hover:scale-105 transition cursor-pointer"
+              >
                 <Image
                   src="/SCreen/puzzel.png"
                   width={300}
@@ -132,8 +131,6 @@ export default function GamesPage() {
                 <span className="text-white text-2xl font-semibold">
                   Puzzle
                 </span>
-
-
               </div>
 
               {/* Memory */}
@@ -159,20 +156,80 @@ export default function GamesPage() {
             </div>
 
             {/* Awareness Farm */}
-            <div className="bg-[#57D93F] w-[720px] h-[260px] rounded-3xl shadow-xl flex flex-col items-center justify-center gap-6 hover:scale-105 transition cursor-pointer">
-              <Image
-                src="/SCreen/farm-ge.png"
-                width={240}
-                height={140}
-                alt="Farm"
-              />
-              <span className="text-white text-3xl font-semibold tracking-wide">
-                Sundew Valley
-              </span>
-            </div>
+            <Link href="SundewValley-master-main/index.html" target="_blank">
+              <div className="bg-[#57D93F] w-[720px] h-[260px] rounded-3xl shadow-xl flex flex-col items-center justify-center gap-6 hover:scale-105 transition cursor-pointer">
+                <Image
+                  src="/SCreen/farm-ge.png"
+                  width={240}
+                  height={140}
+                  alt="Farm"
+                />
+                <span className="text-white text-3xl font-semibold tracking-wide">
+                  Sundew Valley
+                </span>
+              </div>
+            </Link>
           </div>
         </div>
       </div>
+
+    
+
+      {/* ================= LOGOUT POPUP ================= */}
+      {showLogoutPopup && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-[1000]">
+          <div className="bg-white rounded-3xl shadow-2xl p-10 w-[90%] max-w-[480px] text-center relative">
+            <div className="flex justify-center mb-4">
+              <Image
+                src="/SCreen/Group 45.png"
+                width={120}
+                height={120}
+                alt="green character"
+                className="animate-bounce-fast"
+              />
+            </div>
+
+            <h2 className="text-3xl font-bold text-green-700 mb-3">
+              Are you sure you want to logout?
+            </h2>
+            <p className="text-gray-600 mb-8">
+              You’ll be redirected to the login page.
+            </p>
+
+            <div className="flex justify-center gap-6">
+              <button
+                onClick={handleLogout}
+                className="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition font-medium text-lg"
+              >
+                Yes, Logout
+              </button>
+
+              <button
+                onClick={() => setShowLogoutPopup(false)}
+                className="bg-gray-300 text-gray-800 px-6 py-3 rounded-xl hover:bg-gray-400 transition font-medium text-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+
+          {/* حركة للكائن الأخضر */}
+          <style jsx global>{`
+            @keyframes bounce {
+              0%,
+              100% {
+                transform: translateY(0);
+              }
+              50% {
+                transform: translateY(-10px);
+              }
+            }
+            .animate-bounce-fast {
+              animation: bounce 1s infinite;
+            }
+          `}</style>
+        </div>
+      )}
     </div>
   );
 }

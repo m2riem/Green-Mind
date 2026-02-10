@@ -1,0 +1,315 @@
+const upload = document.getElementById("upload");
+const uploadLabel = document.getElementById("upload-label");
+const game = document.getElementById("game");
+const slots = document.getElementById("slots");
+const fullImageContainer = document.getElementById("full-image-container");
+const fullImage = document.getElementById("full-image");
+const scoreDisplay = document.getElementById("score");
+const timerDisplay = document.getElementById("timer");
+const movesDisplay = document.getElementById("moves");
+const restartBtn = document.getElementById("restart-btn");
+const hintBtn = document.getElementById("hint-btn");
+const gameOverScreen = document.getElementById("game-over");
+const finalScore = document.getElementById("final-score");
+const finalTime = document.getElementById("final-time");
+const finalMoves = document.getElementById("final-moves");
+const playAgainBtn = document.getElementById("play-again-btn");
+const CURRENT_LEVEL_NUMBER = 1; 
+// Audio
+const flipSound = document.getElementById("flip-sound");
+const successSound = document.getElementById("success-sound");
+const failSound = document.getElementById("fail-sound");
+const completeSound = document.getElementById("complete-sound");
+
+// Game state
+let tiles = [];
+let imageSlices = [];
+let currentFlipped = null;
+let isLocked = false;
+let originalImageSrc = null;
+let score = 0;
+let seconds = 0;
+let timerInterval = null;
+let moves = 0;
+let hintsRemaining = 3;
+let completedSlots = 0;
+const GRID_SIZE = 5;
+
+// --- Initialize slots ---
+function initializeSlots() {
+  slots.innerHTML = "";
+  for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+    const slot = document.createElement("div");
+    slot.className = "slot";
+    slot.dataset.index = i;
+    const number = document.createElement("div");
+    number.className = "number";
+    number.textContent = i + 1;
+    slot.appendChild(number);
+    slots.appendChild(slot);
+  }
+}
+
+// --- Timer ---
+function startTimer() {
+  if (!timerInterval) {
+    timerInterval = setInterval(() => {
+      seconds++;
+      updateTimerDisplay();
+    }, 1000);
+  }
+}
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+  }
+}
+function updateTimerDisplay() {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  timerDisplay.textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+}
+
+// --- UI updates ---
+function updateMovesDisplay() { movesDisplay.textContent = moves; }
+function updateScoreDisplay() { scoreDisplay.textContent = score; }
+function updateHintButton() {
+  hintBtn.textContent = `Hint (${hintsRemaining})`;
+  hintBtn.disabled = hintsRemaining <= 0 || !currentFlipped;
+}
+
+// --- Reset game ---
+function resetGame() {
+  stopTimer();
+  score = 0; moves = 0; hintsRemaining = 3; completedSlots = 0;
+  currentFlipped = null; isLocked = false; seconds = 0;
+  updateScoreDisplay(); updateMovesDisplay(); updateHintButton(); updateTimerDisplay();
+  game.innerHTML = "";
+  initializeSlots();
+  tiles = []; imageSlices = [];
+}
+
+// --- Setup game from image ---
+function setupGame(img) {
+  resetGame();
+  const size = Math.min(img.width, img.height);
+  const sx = Math.floor((img.width - size)/2);
+  const sy = Math.floor((img.height - size)/2);
+  const canvas = document.createElement("canvas");
+  canvas.width = size; canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size);
+  fullImage.src = canvas.toDataURL();
+  originalImageSrc = fullImage.src;
+  const pieceSize = Math.floor(size / GRID_SIZE);
+  imageSlices = [];
+  for (let y=0; y<GRID_SIZE; y++) {
+    for (let x=0; x<GRID_SIZE; x++) {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = pieceSize; tempCanvas.height = pieceSize;
+      const tCtx = tempCanvas.getContext("2d");
+      tCtx.drawImage(canvas, x*pieceSize, y*pieceSize, pieceSize, pieceSize, 0,0,pieceSize,pieceSize);
+      imageSlices.push(tempCanvas.toDataURL());
+    }
+  }
+  startGame(imageSlices);
+  showFullImage(5000);
+}
+
+//Show full image preview
+function showFullImage(duration=1000) {
+  fullImageContainer.classList.add("visible");
+  fullImage.src = originalImageSrc;
+  setTimeout(() => {
+    fullImageContainer.classList.remove("visible");
+    startTimer();
+  }, duration);
+}
+
+//Start game
+function startGame(images) {
+  tiles = [];
+  const originalOrder = [...Array(GRID_SIZE*GRID_SIZE).keys()];
+  const shuffledPositions = [...originalOrder].sort(()=>Math.random()-0.5);
+  game.innerHTML = "";
+  slots.querySelectorAll(".slot").forEach(s => s.innerHTML=`<div class="number">${parseInt(s.dataset.index)+1}</div>`);
+  for (let i=0; i<GRID_SIZE*GRID_SIZE; i++) {
+    const pieceIndex = shuffledPositions[i];
+    const tile = document.createElement("div");
+    tile.className = "tile";
+    tile.dataset.correctIndex = pieceIndex;
+    tile.dataset.locked = "false";
+    const inner = document.createElement("div"); inner.className="inner";
+    const front = document.createElement("div"); front.className="front"; front.textContent=i+1;
+    const back = document.createElement("div"); back.className="back";
+    const img = document.createElement("img"); img.src = images[pieceIndex];
+    back.appendChild(img);
+    inner.appendChild(front); inner.appendChild(back);
+    tile.appendChild(inner);
+    game.appendChild(tile);
+    tile.addEventListener("click", ()=>handleTileClick(tile));
+    tiles.push(tile);
+  }
+  updateHintButton();
+}
+
+//Handle tile click
+function handleTileClick(tile) {
+  if (tile.classList.contains("flipped") || isLocked || tile.dataset.locked==="true" || currentFlipped) return;
+  if(flipSound){ try{flipSound.currentTime=0;flipSound.play();}catch(e){} }
+  tile.classList.add("flipped");
+  currentFlipped = tile;
+  isLocked = true;
+  const correctIndex = parseInt(tile.dataset.correctIndex);
+  const slotClick = (e)=>{
+    const slotIndex = parseInt(e.currentTarget.dataset.index);
+    moves++; updateMovesDisplay();
+    if(slotIndex === correctIndex){
+      const imgNode = currentFlipped.querySelector(".back img").cloneNode();
+      const slot = slots.querySelector(`.slot[data-index='${slotIndex}']`);
+      slot.innerHTML=""; slot.appendChild(imgNode);
+      currentFlipped.dataset.locked="true";
+      currentFlipped.classList.add("placed");
+      currentFlipped = null;
+      isLocked=false;
+      score+=10; updateScoreDisplay();
+      completedSlots++;
+      if(successSound){ try{successSound.currentTime=0;successSound.play();}catch(e){} }
+      if(completedSlots===GRID_SIZE*GRID_SIZE) completePuzzle();
+    } else {
+      if(failSound){ try{failSound.currentTime=0;failSound.play();}catch(e){} }
+      document.querySelectorAll(".tile,.slot").forEach(el=>{el.style.animation="shake 0.5s"; setTimeout(()=>el.style.animation="",500); });
+      setTimeout(()=>{
+        tile.classList.remove("flipped");
+        currentFlipped.dataset.locked="false";
+        currentFlipped=null;
+        isLocked=false;
+        score=Math.max(0,score-5); updateScoreDisplay();
+      },700);
+    }
+    slots.querySelectorAll(".slot").forEach(s=>s.removeEventListener("click",slotClick));
+    updateHintButton();
+  };
+  slots.querySelectorAll(".slot").forEach(s=>s.addEventListener("click",slotClick));
+  updateHintButton();
+}
+
+function completePuzzle() {
+  stopTimer();
+  
+  // حفظ إن الليفل خلص وسكوره كام
+  localStorage.setItem(`level${CURRENT_LEVEL_NUMBER}Completed`, 'true');
+  localStorage.setItem(`level${CURRENT_LEVEL_NUMBER}Score`, score);
+
+  finalScore.textContent = score;
+  finalTime.textContent = timerDisplay.textContent;
+  finalMoves.textContent = moves;
+
+  if(completeSound){ try{completeSound.currentTime=0;completeSound.play(); } catch(e){} }
+  createConfetti();
+   
+  playAgainBtn.innerHTML = "Go to Map <i class='fas fa-map-marked-alt'></i>";
+   playAgainBtn.onclick = () => { window.location.href = 'map1.html'; }; 
+  
+  setTimeout(() => gameOverScreen.classList.add("visible"), 1000);
+}
+
+function goToNextLevel() {
+    const NEXT_LEVEL = CURRENT_LEVEL_NUMBER + 1;
+    
+    if (NEXT_LEVEL <= 10) {
+        window.location.href = `puzzle${NEXT_LEVEL}.html`;
+    } else {
+        window.location.href = 'map1.html'; // لو خلصنا الـ 10 ليفيلات
+    }
+}
+
+// --- Confetti ---
+function createConfetti() {
+  const colors=['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff'];
+  for(let i=0;i<100;i++){
+    const confetti=document.createElement("div");
+    confetti.className="confetti";
+    confetti.style.left=Math.random()*100+'vw';
+    confetti.style.top='-10px';
+    confetti.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+    confetti.style.transform=`rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(confetti);
+    const duration=Math.random()*3+2;
+    confetti.animate([{top:'-10px',opacity:1},{top:'100vh',opacity:0}],{duration:duration*1000,easing:'cubic-bezier(0.1,0.8,0.9,1)'});
+    setTimeout(()=>confetti.remove(),duration*1000);
+  }
+}
+
+//Shake keyframes
+const style=document.createElement("style");
+style.textContent=`@keyframes shake {0%,100%{transform:translateX(0);}10%,30%,50%,70%,90%{transform:translateX(-5px);}20%,40%,60%,80%{transform:translateX(5px);}}`;
+document.head.appendChild(style);
+
+//Buttons
+restartBtn.addEventListener("click",()=>{
+  if(originalImageSrc){
+    const img=new Image();
+    img.onload=()=>setupGame(img);
+    img.src=originalImageSrc;
+    gameOverScreen.classList.remove("visible");
+  }
+});
+
+// --- Hint button ---
+hintBtn.addEventListener("click", () => {
+  if (hintsRemaining > 0 && currentFlipped) {
+    const tile = currentFlipped;
+    const correctIndex = parseInt(tile.dataset.correctIndex);
+    const slot = document.querySelector(`.slot[data-index="${correctIndex}"]`);
+    if (!slot) return;
+    slot.innerHTML = "";
+    const imgNode = tile.querySelector(".back img").cloneNode();
+    slot.appendChild(imgNode);
+    tile.dataset.locked = "true";
+    tile.classList.add("placed");
+    currentFlipped = null;
+    isLocked = false;
+    const inner = tile.querySelector(".inner");
+    if (inner) {
+      inner.style.transform = "none";
+      inner.style.transition = "none";
+    }
+    tile.classList.remove("flipped");
+    completedSlots++;
+    score += 5;
+    updateScoreDisplay();
+    hintsRemaining--;
+    updateHintButton();
+    if (successSound) { 
+      try { successSound.currentTime = 0; successSound.play(); } catch(e) {} 
+    }
+    if (completedSlots === GRID_SIZE * GRID_SIZE) completePuzzle();
+  }
+});
+function updateScoreDisplay() { 
+    scoreDisplay.textContent = score; 
+    
+    // هنا الكود هيعرف لوحده يسجل في أنهي ليفل بناءً على الرقم اللي فوق
+    localStorage.setItem(`level${CURRENT_LEVEL_NUMBER}Score`, score); 
+}
+// --- Upload ---
+if(upload){
+  upload.addEventListener("change",(e)=>{
+    const file=e.target.files[0];
+    if(!file) return;
+    uploadLabel.innerHTML=`<i class="fas fa-spinner fa-spin"></i> Loading...`;
+    const img=new Image();
+    img.onload=()=>{ setupGame(img); uploadLabel.innerHTML=`<i class="fas fa-check"></i> Image Loaded!`; setTimeout(()=>{uploadLabel.innerHTML=`<i class="fas fa-image"></i> Change Image`;},3000); };
+    img.onerror=()=>{ uploadLabel.innerHTML=`<i class="fas fa-exclamation-triangle"></i> Error Loading`; setTimeout(()=>{uploadLabel.innerHTML=`<i class="fas fa-image"></i> Choose an Image`;},1000); };
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+// --- Auto-load built-in image ---
+window.addEventListener("load", () => {
+  const img = new Image();
+  img.onload = () => setupGame(img);
+  img.src = "assets/images/boy.jpg"; 
+});
