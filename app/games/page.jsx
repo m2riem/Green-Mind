@@ -134,6 +134,7 @@ export default function GamesPage() {
               </div>
 
               {/* Memory */}
+              <Link href="othergames/start.html" target="_blank">
               <div className="bg-[#FF6F6F] w-[480px] h-[360px] rounded-3xl shadow-xl flex flex-col items-center justify-center gap-6 hover:scale-105 transition cursor-pointer">
                 <div className="flex gap-4">
                   <Image
@@ -153,6 +154,7 @@ export default function GamesPage() {
                   Memory Card
                 </span>
               </div>
+              </Link>
             </div>
 
             {/* Awareness Farm */}
