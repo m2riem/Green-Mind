@@ -1,3 +1,5 @@
+
+
 "use client";
 import Link from "next/link";
 
@@ -54,7 +56,10 @@ export default function SelectRole() {
               className="w-[140px] h-[170px] rounded-xl object-cover transform transition-transform duration-300 hover:scale-110"
             />
 
+
             <Link href="/dashboard">
+          <Link href="/child">
+
               <button className="mt-2 bg-[#4C0000] text-white w-[150px] py-0 rounded-xl text-[22px] font-medium cursor-pointer">
                 I’m a child
               </button>

@@ -138,8 +138,10 @@ ${data.advice.join(" • ")}
               href="/ai-scan"
               active
             />
-            <MenuItem
-              title="Tree Growth"
+        <MenuItem
+
+             <MenuItem
+        title="Tree Growth"
               icon="/SCreen/tree-gro.png"
               href="/growth"
             />
@@ -268,6 +270,7 @@ ${data.advice.join(" • ")}
           <div className="bg-white rounded-3xl shadow-md p-8">
             <h3 className="font-semibold mb-4">Recent Plants</h3>
 
+
             <div className="flex gap-4 flex-wrap">
               {recentScans.slice(0, 4).map((item) => (
                 <Image
@@ -280,7 +283,32 @@ ${data.advice.join(" • ")}
                   onClick={() => setSelectedScan(item)}
                 />
               ))}
+
+              <div>
+                <h3 className="text-green-600 font-bold text-lg">+2 XP!</h3>
+                <p className="text-sm text-gray-600">
+                  Scnning your Real Plants Help You Grow Your Tree 🌳
+                </p>
+              </div>
             </div>
+
+            {/* Recent */}
+            <div className="bg-white rounded-3xl shadow-md p-8">
+              <h3 className="font-semibold mb-4">Recent Plant You Scanned</h3>
+
+              <div className="flex gap-4 flex-wrap">
+                {recentScans.slice(0, 4).map((img, i) => (
+                  <Image
+                    key={i}
+                    src={img}
+                    width={90}
+                    height={70}
+                    className="rounded-xl object-cover"
+                    alt="plant"
+                  />
+                ))}
+              </div>
+        </div>
           </div>
         </div>
       </div>
